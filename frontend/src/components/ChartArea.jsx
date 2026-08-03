@@ -84,7 +84,7 @@ export default function ChartArea({ symbol, state, tradeState, filterStates = {}
 
     try {
       const resp = await fetch(
-        `http://localhost:8000/api/klines?symbol=${encodeURIComponent(symbol)}&interval=${encodeURIComponent(activeTimeframe.key)}`
+        `${window.location.protocol}//${window.location.hostname}:8000/api/klines?symbol=${encodeURIComponent(symbol)}&interval=${encodeURIComponent(activeTimeframe.key)}`
       );
       const json = await resp.json();
       const candles = json.data || [];

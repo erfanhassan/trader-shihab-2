@@ -21,7 +21,8 @@ function SystemClock() {
 }
 
 function App() {
-  const wsUrl = "ws://localhost:8000/ws";
+  const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+  const wsUrl = `${wsProtocol}//${window.location.hostname}:8000/ws`;
   const { state, readyState, addSymbol, removeSymbol, activeSymbol, setActiveSymbol, setFilter, toggleShihab, toggleDemoShihab, setDemoInvest, setDemoLeverage, clearHistory } = useWebSocket(wsUrl);
   const [activeSignal, setActiveSignal] = useState(null);
   const prevSignalsLength = useRef(0);

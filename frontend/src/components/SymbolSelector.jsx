@@ -6,7 +6,7 @@ export default function SymbolSelector({ activeSymbol, setActiveSymbol, addSymbo
   const [availableSymbols, setAvailableSymbols] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/symbols')
+    fetch(`${window.location.protocol}//${window.location.hostname}:8000/api/symbols`)
       .then(res => res.json())
       .then(data => {
         if (data.symbols) {
