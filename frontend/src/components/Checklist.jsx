@@ -34,8 +34,8 @@ export default function Checklist({ killzoneActive, symbolState, tradeState, fil
   ];
 
   return (
-    <div className="bg-slate-800 p-5 rounded-xl border border-slate-700 h-full flex flex-col">
-      <h2 className="text-lg font-bold text-slate-100 mb-4">Filter Checklist</h2>
+    <div className="bg-white p-5 rounded-xl border border-slate-300 h-full flex flex-col">
+      <h2 className="text-lg font-bold text-slate-900 mb-4">Filter Checklist</h2>
       <div className="space-y-3 flex-1">
         {filters.map((f) => (
           <div key={f.key} className="flex items-center justify-between gap-2">
@@ -44,14 +44,14 @@ export default function Checklist({ killzoneActive, symbolState, tradeState, fil
                 ? <CheckCircle2 size={18} className="text-emerald-500 flex-shrink-0" />
                 : <Circle size={18} className="text-slate-500 flex-shrink-0" />
               }
-              <span className={`text-sm ${f.active ? 'text-emerald-400' : 'text-slate-400'}`}>
+              <span className={`text-sm ${f.active ? 'text-emerald-600' : 'text-slate-500'}`}>
                 {f.label}
               </span>
             </div>
             <button
               onClick={() => onSetFilter(f.key, !f.enabled)}
               className={`flex-shrink-0 transition-colors ${
-                f.enabled ? 'text-blue-400' : 'text-slate-600 hover:text-slate-400'
+                f.enabled ? 'text-blue-600' : 'text-slate-600 hover:text-slate-500'
               }`}
               title={f.enabled ? `Disable ${f.label} filter` : `Enable ${f.label} filter`}
             >
@@ -63,8 +63,8 @@ export default function Checklist({ killzoneActive, symbolState, tradeState, fil
           </div>
         ))}
       </div>
-      <div className="mt-4 pt-3 border-t border-slate-700 text-sm text-slate-400">
-        <p>State: <span className="font-mono text-slate-300">{symbolState?.setup_state || 'WAITING'}</span></p>
+      <div className="mt-4 pt-3 border-t border-slate-300 text-sm text-slate-500">
+        <p>State: <span className="font-mono text-slate-700">{symbolState?.setup_state || 'WAITING'}</span></p>
       </div>
     </div>
   );

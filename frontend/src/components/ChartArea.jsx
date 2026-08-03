@@ -27,21 +27,21 @@ export default function ChartArea({ symbol, state, tradeState, filterStates = {}
 
     const chartOptions = {
       layout: {
-        background: { type: 'solid', color: '#0f172a' },
-        textColor: '#94a3b8',
+        background: { type: 'solid', color: '#f8fafc' },
+        textColor: '#64748b',
       },
       grid: {
-        vertLines: { color: '#1e293b' },
-        horzLines: { color: '#1e293b' },
+        vertLines: { color: '#e2e8f0' },
+        horzLines: { color: '#e2e8f0' },
       },
       crosshair: {
         mode: CrosshairMode.Normal,
       },
       rightPriceScale: {
-        borderColor: '#1e293b',
+        borderColor: '#e2e8f0',
       },
       timeScale: {
-        borderColor: '#1e293b',
+        borderColor: '#e2e8f0',
         timeVisible: true,
         secondsVisible: false,
       },
@@ -226,12 +226,12 @@ export default function ChartArea({ symbol, state, tradeState, filterStates = {}
   useEffect(() => {
     if (!chartRef.current) return;
     
-    let bgColor = '#0f172a'; // Default slate-900
+    let bgColor = '#f8fafc'; // Default slate-50
     if (filterStates.pressure && tradeState) {
       if (tradeState.pressure_direction === 'BUYING_CONTROL') {
-        bgColor = '#064e3b'; // Dark emerald
+        bgColor = '#d1fae5'; // Light emerald
       } else if (tradeState.pressure_direction === 'SELLING_CONTROL') {
-        bgColor = '#450a0a'; // Dark rose
+        bgColor = '#ffe4e6'; // Light rose
       }
     }
 
@@ -308,21 +308,21 @@ export default function ChartArea({ symbol, state, tradeState, filterStates = {}
   const symbolState = state && state[symbol] ? state[symbol] : {};
 
   return (
-    <div className="bg-slate-800 rounded-xl border border-slate-700 h-[400px] flex flex-col overflow-hidden">
+    <div className="bg-white rounded-xl border border-slate-300 h-[400px] flex flex-col overflow-hidden">
       {/* Header with timeframe selector and trend badges */}
-      <div className="px-4 py-2.5 flex items-center justify-between border-b border-slate-700">
+      <div className="px-4 py-2.5 flex items-center justify-between border-b border-slate-300">
         <div className="flex items-center gap-3">
-          <span className="text-sm font-semibold text-slate-200">{symbol} / USDT</span>
+          <span className="text-sm font-semibold text-slate-800">{symbol} / USDT</span>
           {/* Timeframe selector buttons */}
-          <div className="flex items-center gap-1 bg-slate-900/60 rounded-lg p-0.5">
+          <div className="flex items-center gap-1 bg-slate-50/60 rounded-lg p-0.5">
             {TIMEFRAMES.map((tf) => (
               <button
                 key={tf.key}
                 onClick={() => setActiveTimeframe(tf)}
                 className={`px-2.5 py-1 rounded-md text-xs font-medium transition-all ${
                   activeTimeframe.key === tf.key
-                    ? 'bg-blue-500/20 text-blue-400 shadow-sm'
-                    : 'text-slate-500 hover:text-slate-300 hover:bg-slate-700/50'
+                    ? 'bg-blue-500/20 text-blue-600 shadow-sm'
+                    : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100/50'
                 }`}
               >
                 {tf.label}
@@ -333,7 +333,7 @@ export default function ChartArea({ symbol, state, tradeState, filterStates = {}
                 fetchKlines();
                 if (chartRef.current) chartRef.current.timeScale().fitContent();
               }}
-              className="ml-1 px-2 py-1 text-slate-400 hover:text-blue-400 transition-colors"
+              className="ml-1 px-2 py-1 text-slate-500 hover:text-blue-600 transition-colors"
               title="Refresh Chart"
             >
               <RefreshCw size={14} />
@@ -346,7 +346,7 @@ export default function ChartArea({ symbol, state, tradeState, filterStates = {}
                  <span className="text-slate-500">1D High:</span>
                  {symbolState['1d_high'].toFixed(1)}
                </div>
-               <div className="flex items-center gap-1 text-emerald-400">
+               <div className="flex items-center gap-1 text-emerald-600">
                  <span className="text-slate-500">1D Low:</span>
                  {symbolState['1d_low'].toFixed(1)}
                </div>
@@ -363,7 +363,7 @@ export default function ChartArea({ symbol, state, tradeState, filterStates = {}
               return (
                 <div
                   key={tf.key}
-                  className="flex items-center gap-1 px-2 py-1 rounded-md text-[10px] font-bold bg-slate-700/40 text-slate-500 border border-slate-700/50"
+                  className="flex items-center gap-1 px-2 py-1 rounded-md text-[10px] font-bold bg-slate-100/40 text-slate-500 border border-slate-300/50"
                   title={`${tf.label} — No data`}
                 >
                   <span>{tf.label}</span>
@@ -376,8 +376,8 @@ export default function ChartArea({ symbol, state, tradeState, filterStates = {}
                 key={tf.key}
                 className={`flex items-center gap-1 px-2 py-1 rounded-md text-[10px] font-bold border transition-colors ${
                   isBullish
-                    ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
-                    : 'bg-rose-500/10 text-rose-400 border-rose-500/30'
+                    ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30'
+                    : 'bg-rose-500/10 text-rose-600 border-rose-500/30'
                 }`}
                 title={`${tf.label} ${isBullish ? 'Bullish' : 'Bearish'} (EMA 20/50)`}
               >
@@ -391,13 +391,13 @@ export default function ChartArea({ symbol, state, tradeState, filterStates = {}
 
       {/* Delta Pressure Metrics Row */}
       {tradeState && (
-        <div className="px-4 py-1.5 flex items-center justify-between border-b border-slate-700 bg-slate-800/50">
+        <div className="px-4 py-1.5 flex items-center justify-between border-b border-slate-300 bg-white/50">
           <div className="flex items-center gap-4 text-xs">
-            <span className="text-slate-400">1m Buy Vol: <span className="text-emerald-400 font-mono">{tradeState.buy_vol.toFixed(2)}</span></span>
-            <span className="text-slate-400">1m Sell Vol: <span className="text-rose-400 font-mono">{tradeState.sell_vol.toFixed(2)}</span></span>
-            <span className="text-slate-400">Delta: <span className={`font-mono font-bold ${tradeState.delta > 0 ? 'text-emerald-400' : tradeState.delta < 0 ? 'text-rose-400' : 'text-slate-400'}`}>{tradeState.delta > 0 ? '+' : ''}{tradeState.delta.toFixed(2)}</span></span>
+            <span className="text-slate-500">1m Buy Vol: <span className="text-emerald-600 font-mono">{tradeState.buy_vol.toFixed(2)}</span></span>
+            <span className="text-slate-500">1m Sell Vol: <span className="text-rose-600 font-mono">{tradeState.sell_vol.toFixed(2)}</span></span>
+            <span className="text-slate-500">Delta: <span className={`font-mono font-bold ${tradeState.delta > 0 ? 'text-emerald-600' : tradeState.delta < 0 ? 'text-rose-600' : 'text-slate-500'}`}>{tradeState.delta > 0 ? '+' : ''}{tradeState.delta.toFixed(2)}</span></span>
           </div>
-          <div className={`text-xs font-bold px-2 py-0.5 rounded ${tradeState.pressure_direction === 'BUYING_CONTROL' ? 'bg-emerald-500/20 text-emerald-400' : tradeState.pressure_direction === 'SELLING_CONTROL' ? 'bg-rose-500/20 text-rose-400' : 'bg-slate-700 text-slate-400'}`}>
+          <div className={`text-xs font-bold px-2 py-0.5 rounded ${tradeState.pressure_direction === 'BUYING_CONTROL' ? 'bg-emerald-500/20 text-emerald-600' : tradeState.pressure_direction === 'SELLING_CONTROL' ? 'bg-rose-500/20 text-rose-600' : 'bg-slate-100 text-slate-500'}`}>
             {tradeState.pressure_direction.replace('_', ' ')}
           </div>
         </div>
@@ -407,7 +407,7 @@ export default function ChartArea({ symbol, state, tradeState, filterStates = {}
       <div ref={chartContainerRef} className="flex-1 w-full relative">
         {/* Helper overlay for killzone if enabled */}
         {filterStates.killzone && activeTimeframe.key === 'Min1' && (
-           <div className="absolute top-2 left-2 px-2 py-1 bg-emerald-500/20 text-emerald-400 text-xs rounded border border-emerald-500/30 z-10 pointer-events-none">
+           <div className="absolute top-2 left-2 px-2 py-1 bg-emerald-500/20 text-emerald-600 text-xs rounded border border-emerald-500/30 z-10 pointer-events-none">
              Killzone Filter Active
            </div>
         )}
@@ -415,12 +415,12 @@ export default function ChartArea({ symbol, state, tradeState, filterStates = {}
         {/* Signal Details Widget */}
         {selectedSignal && (
           <div 
-            className="absolute z-20 bg-slate-900 border border-slate-600 rounded-lg shadow-2xl p-3 w-[200px] transition-all duration-150"
+            className="absolute z-20 bg-slate-50 border border-slate-600 rounded-lg shadow-2xl p-3 w-[200px] transition-all duration-150"
             style={{ left: selectedSignal.x, top: selectedSignal.y }}
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex justify-between items-center mb-2 pb-2 border-b border-slate-700/50">
-              <span className={`text-xs font-bold ${selectedSignal.direction === 'LONG' ? 'text-emerald-400' : 'text-rose-400'}`}>
+            <div className="flex justify-between items-center mb-2 pb-2 border-b border-slate-300/50">
+              <span className={`text-xs font-bold ${selectedSignal.direction === 'LONG' ? 'text-emerald-600' : 'text-rose-600'}`}>
                 {selectedSignal.direction} SIGNAL
               </span>
               <span className="text-[10px] text-slate-500 font-mono">
@@ -429,16 +429,16 @@ export default function ChartArea({ symbol, state, tradeState, filterStates = {}
             </div>
             <div className="space-y-1.5 text-xs">
               <div className="flex justify-between">
-                <span className="text-slate-400">Entry</span>
-                <span className="font-mono text-slate-200">{Number(selectedSignal.entry).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 6})}</span>
+                <span className="text-slate-500">Entry</span>
+                <span className="font-mono text-slate-800">{Number(selectedSignal.entry).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 6})}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-400">Stop Loss</span>
-                <span className="font-mono text-rose-400">{Number(selectedSignal.sl).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 6})}</span>
+                <span className="text-slate-500">Stop Loss</span>
+                <span className="font-mono text-rose-600">{Number(selectedSignal.sl).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 6})}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-400">Take Profit</span>
-                <span className="font-mono text-emerald-400">{Number(selectedSignal.tp).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 6})}</span>
+                <span className="text-slate-500">Take Profit</span>
+                <span className="font-mono text-emerald-600">{Number(selectedSignal.tp).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 6})}</span>
               </div>
             </div>
           </div>

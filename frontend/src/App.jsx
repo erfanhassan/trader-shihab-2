@@ -17,7 +17,7 @@ function SystemClock() {
     }, 1000);
     return () => clearInterval(interval);
   }, []);
-  return <p className="text-2xl font-mono text-slate-200">{time} UTC</p>;
+  return <p className="text-2xl font-mono text-slate-800">{time} UTC</p>;
 }
 
 function App() {
@@ -80,14 +80,14 @@ function App() {
   }, [state.signals, activeSymbol]);
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 p-6">
+    <div className="min-h-screen bg-slate-50 text-slate-900 p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         
         {/* Header */}
-        <header className="flex items-center justify-between border-b border-slate-800 pb-4">
+        <header className="flex items-center justify-between border-b border-slate-200 pb-4">
           <div className="flex items-center gap-3">
             <Activity className="text-blue-500" size={28} />
-            <h1 className="text-2xl font-bold tracking-tight">Liquidity Sweep Scanner</h1>
+            <h1 className="text-2xl font-bold tracking-tight">11 strategy</h1>
           </div>
           <div className="flex items-center gap-6">
             <div className="flex gap-2">
@@ -96,7 +96,7 @@ function App() {
                 className={`flex items-center gap-2 px-3 py-2 rounded-lg font-bold transition-all duration-300 text-sm ${
                   state.shihab_demo_active
                     ? 'bg-purple-600 hover:bg-purple-700 text-white shadow-[0_0_15px_rgba(147,51,234,0.5)] animate-pulse'
-                    : 'bg-slate-800 hover:bg-slate-700 text-slate-400 border border-slate-700'
+                    : 'bg-white hover:bg-slate-100 text-slate-500 border border-slate-300'
                 }`}
                 title="Simulate trades with Demo Money"
               >
@@ -109,7 +109,7 @@ function App() {
                 className={`flex items-center gap-2 px-3 py-2 rounded-lg font-bold transition-all duration-300 text-sm ${
                   state.shihab_active
                     ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-[0_0_15px_rgba(37,99,235,0.5)] animate-pulse'
-                    : 'bg-slate-800 hover:bg-slate-700 text-slate-400 border border-slate-700'
+                    : 'bg-white hover:bg-slate-100 text-slate-500 border border-slate-300'
                 }`}
                 title="Execute LIVE trades with Real Money"
               >
@@ -120,7 +120,7 @@ function App() {
             
             <div className="flex items-center gap-3">
               <div className={`w-3 h-3 rounded-full ${readyState === 1 ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`} />
-              <span className="text-sm font-medium text-slate-400">
+              <span className="text-sm font-medium text-slate-500">
                 {readyState === 1 ? 'WS Connected' : 'Disconnected'}
               </span>
             </div>
@@ -140,8 +140,8 @@ function App() {
           </div>
           <div className="md:col-span-1">
              {/* Some stats could go here */}
-             <div className="bg-slate-800 p-4 rounded-xl border border-slate-700 h-full flex flex-col justify-center">
-                <p className="text-slate-400 text-sm">System Time</p>
+             <div className="bg-white p-4 rounded-xl border border-slate-300 h-full flex flex-col justify-center">
+                <p className="text-slate-500 text-sm">System Time</p>
                 <SystemClock />
              </div>
           </div>

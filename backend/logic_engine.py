@@ -23,7 +23,8 @@ class LogicEngine:
             {"name": "S7_Delta_Div", "leverage": 400, "htf": False, "delta": True, "rsi": False, "time_exit": False, "fvg": False, "pre_liq": False, "cross_margin": False, "scale_out": False, "auto_lev": False, "atr_filter": False},
             {"name": "S8_RSI_Div", "leverage": 400, "htf": False, "delta": False, "rsi": True, "time_exit": False, "fvg": False, "pre_liq": False, "cross_margin": False, "scale_out": False, "auto_lev": False, "atr_filter": False},
             {"name": "S9_TimeExit", "leverage": 400, "htf": False, "delta": False, "rsi": False, "time_exit": True, "fvg": False, "pre_liq": False, "cross_margin": False, "scale_out": False, "auto_lev": False, "atr_filter": False},
-            {"name": "S10_FVG_Conf", "leverage": 400, "htf": False, "delta": False, "rsi": False, "time_exit": False, "fvg": True, "pre_liq": False, "cross_margin": False, "scale_out": False, "auto_lev": False, "atr_filter": False}
+            {"name": "S10_FVG_Conf", "leverage": 400, "htf": False, "delta": False, "rsi": False, "time_exit": False, "fvg": True, "pre_liq": False, "cross_margin": False, "scale_out": False, "auto_lev": False, "atr_filter": False},
+            {"name": "S11_Quick_0_15_TP", "leverage": 400, "htf": False, "delta": False, "rsi": False, "time_exit": False, "fvg": False, "pre_liq": False, "cross_margin": False, "scale_out": False, "auto_lev": False, "atr_filter": False, "quick_tp": True}
         ]
 
         # symbol -> state dict
@@ -617,12 +618,26 @@ class LogicEngine:
 
         is_red = c_close < c_open
         is_green = c_close > c_open
-        vol_surge = c_vol > (1.5 * avg_vol)
+        vol_surge = c_vol > (1.2 * avg_vol)
         
         state["vol_ok"] = vol_surge
 
-        # Only evaluate on close
-        if current_candle.get("is_closed", False):
+        trigger_direction = None
+        
+        # Immediate real-time sweep trigger (skips setup/waiting)
+        if not is_historical:
+            current_delta = self.trade_data.get(symbol, {}).get("delta", 0)
+            if c_low < d1_low and current_delta > 0 and vol_surge:
+                trigger_direction = "LONG"
+                state["setup_candle"] = current_candle
+                state["target_tp"] = max([c["h"] for c in history[-61:-1]])
+            elif c_high > d1_high and current_delta < 0 and vol_surge:
+                trigger_direction = "SHORT"
+                state["setup_candle"] = current_candle
+                state["target_tp"] = min([c["l"] for c in history[-61:-1]])
+
+        # Only evaluate traditional state machine on close, if not already triggered real-time
+        if current_candle.get("is_closed", False) and not trigger_direction:
             setup_state = state.get("setup_state", "WAITING")
 
             # State Resets (if price falls back into the waiting zone)
@@ -658,8 +673,6 @@ class LogicEngine:
 
             # Refresh setup_state variable in case it just transitioned
             setup_state = state.get("setup_state", "WAITING")
-            
-            trigger_direction = None
 
             if setup_state == "SWEPT_HIGH":
                 if is_red:
@@ -673,7 +686,7 @@ class LogicEngine:
             
             elif setup_state == "SHORT_SETUP_FORMED":
                 setup_candle = state.get("setup_candle")
-                buffer_price = setup_candle["l"] * (1 - 0.0005) # 0.05% buffer below low
+                buffer_price = setup_candle["l"] # No buffer
                 if current_candle["c"] < buffer_price and vol_surge:
                     trigger_direction = "SHORT"
                     state["setup_state"] = "TRADED_HIGH"
@@ -685,7 +698,7 @@ class LogicEngine:
             
             elif setup_state == "LONG_SETUP_FORMED":
                 setup_candle = state.get("setup_candle")
-                buffer_price = setup_candle["h"] * (1 + 0.0005) # 0.05% buffer above high
+                buffer_price = setup_candle["h"] # No buffer
                 if current_candle["c"] > buffer_price and vol_surge:
                     trigger_direction = "LONG"
                     state["setup_state"] = "TRADED_LOW"
@@ -768,17 +781,27 @@ class LogicEngine:
             
         sl = base_sl
         
-        # Strict 1:2 Risk/Reward Take Profit
-        if direction == "SHORT":
-            risk = sl - trigger_candle["c"]
-            tp = trigger_candle["c"] - (2 * risk)
-            # Scale-out TP1 logic: Take half of the distance from entry to TP
-            tp1 = trigger_candle["c"] - risk
+        # Strict 1:2 Risk/Reward Take Profit or Quick TP
+        if strategy.get("quick_tp"):
+            if direction == "SHORT":
+                risk = sl - trigger_candle["c"]
+                tp = trigger_candle["c"] * (1 - 0.0015)
+                tp1 = tp
+            else:
+                risk = trigger_candle["c"] - sl
+                tp = trigger_candle["c"] * (1 + 0.0015)
+                tp1 = tp
         else:
-            risk = trigger_candle["c"] - sl
-            tp = trigger_candle["c"] + (2 * risk)
-            # Scale-out TP1 logic: Take half of the distance from entry to TP
-            tp1 = trigger_candle["c"] + risk
+            if direction == "SHORT":
+                risk = sl - trigger_candle["c"]
+                tp = trigger_candle["c"] - (2 * risk)
+                # Scale-out TP1 logic: Take half of the distance from entry to TP
+                tp1 = trigger_candle["c"] - risk
+            else:
+                risk = trigger_candle["c"] - sl
+                tp = trigger_candle["c"] + (2 * risk)
+                # Scale-out TP1 logic: Take half of the distance from entry to TP
+                tp1 = trigger_candle["c"] + risk
 
         vol_ratio = setup_candle["v"] / avg_vol if avg_vol > 0 else 0
 
@@ -838,6 +861,8 @@ class LogicEngine:
             strategy_metric = "15m Timer Enabled"
         elif strategy['name'] == 'S10_FVG_Conf':
             strategy_metric = "FVG Confirmed"
+        elif strategy['name'] == 'S11_Quick_0_15_TP':
+            strategy_metric = "0.15% Quick TP"
         else:
             strategy_metric = "400x Static"
 

@@ -180,7 +180,7 @@ class GoogleSheetsClient:
                 "Setup ID", "Open Time", 
                 "S0_Baseline_400x", "S1_AutoLeverage", "S2_PreLiq_SL", "S3_ATR_Filter",
                 "S4_CrossMargin", "S5_ScaleOut_BE", "S6_HTF_Aligned", "S7_Delta_Div",
-                "S8_RSI_Div", "S9_TimeExit", "S10_FVG_Conf"
+                "S8_RSI_Div", "S9_TimeExit", "S10_FVG_Conf", "S11_Quick_0_15_TP"
             ]
             curr_headers = self._execute_with_retry(sheet.row_values, 1)
             if curr_headers != headers:
